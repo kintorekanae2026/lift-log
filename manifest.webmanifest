@@ -1,0 +1,13 @@
+{
+  "name": "Lift Log - 筋トレ記録",
+  "short_name": "Lift Log",
+  "description": "筋トレの重量、回数、セットをシンプルに記録するアプリ",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f5ee",
+  "theme_color": "#39684b",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
