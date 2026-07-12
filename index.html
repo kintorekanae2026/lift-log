@@ -1,42 +1,26 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#151515" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="manifest.webmanifest?v=3" />
-  <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="style.css?v=3" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151515">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest?v=4">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css?v=4">
   <title>Lift Log</title>
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar"><div class="brand"><span class="brand-mark">LL</span><h1>Lift Log</h1></div><button class="icon-button" id="settingsButton" aria-label="設定">⚙</button></header>
-    <section id="onboarding" class="onboarding" hidden>
-      <p class="kicker">LET'S GET STARTED</p><h2>あなた向けのメニューを作ります</h2><p>あとから設定でいつでも変更できます。</p>
-      <form id="setupForm" class="stack">
-        <label>目標<select name="goal"><option value="muscle">筋肉を大きくしたい</option><option value="diet">痩せたい</option><option value="health">健康のために続けたい</option></select></label>
-        <label>経験<select name="experience"><option value="beginner">初心者</option><option value="intermediate">少し経験あり</option><option value="advanced">上級者</option></select></label>
-        <label>週に何回トレーニングできますか？<select name="days"><option value="1">週1回</option><option value="2">週2回</option><option value="3" selected>週3回</option><option value="4">週4回</option><option value="5">週5回</option><option value="6">週6回</option><option value="7">週7回</option></select></label>
-        <label>主な場所<select name="place"><option value="gym">ジム</option><option value="home">自宅</option></select></label>
-        <button class="primary" type="submit">はじめる</button>
-      </form>
-    </section>
-    <div id="appContent" hidden>
-      <section id="screen-home" class="screen active"></section>
-      <section id="screen-workout" class="screen"></section>
-      <section id="screen-progress" class="screen"></section>
-      <section id="screen-menu" class="screen"></section>
-      <section id="screen-settings" class="screen"></section>
-    </div>
+  <main class="app">
+    <header class="topbar"><div class="brand"><span>LL</span><h1>Lift Log</h1></div><button id="settings" class="icon" aria-label="設定">⚙</button></header>
+    <section id="onboarding" class="onboarding" hidden></section>
+    <section id="home" hidden></section>
+    <section id="workout" hidden></section>
+    <section id="progress" hidden></section>
+    <section id="settingsPage" hidden></section>
   </main>
-  <nav class="tabbar" id="tabbar" hidden>
-    <button data-screen="home" class="active"><span>⌂</span>ホーム</button><button data-screen="workout"><span>＋</span>記録</button><button data-screen="progress"><span>↗</span>変化</button><button data-screen="menu"><span>☷</span>メニュー</button>
-  </nav>
-  <dialog id="modal"></dialog>
-  <input id="importInput" type="file" accept="application/json" hidden />
-  <script src="app.js?v=3"></script>
+  <nav id="nav" hidden><button data-page="home">⌂<span>ホーム</span></button><button data-page="workout">＋<span>記録</span></button><button data-page="progress">↗<span>変化</span></button></nav>
+  <dialog id="dialog"></dialog>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
