@@ -1,0 +1,15 @@
+{
+  "id": "./lift-log-v7",
+  "name": "Lift Log - 筋トレ記録",
+  "short_name": "Lift Log",
+  "description": "筋トレの重量、回数、セットとトレーニングペースを記録するアプリ",
+  "lang": "ja",
+  "start_url": "./index-v7.html?app=7",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#151515",
+  "theme_color": "#151515",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
