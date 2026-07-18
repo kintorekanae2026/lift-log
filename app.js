@@ -4,6 +4,7 @@ const state = JSON.parse(localStorage.getItem(KEY) || '{}');
 state.profile ||= null;
 state.sessions ||= [];
 let draft = null;
+let historyPart = 'すべて';
 
 const parts = ['胸', '背中', '腕', '脚'];
 const defaults = {
@@ -60,12 +61,18 @@ function renderWorkout() {
 }
 function renderProgress() {
   const sessions = [...state.sessions].sort((a,b) => a.date.localeCompare(b.date)); const values = sessions.slice(-10).map(s => calories(s)); const max = Math.max(...values, 1); const points = values.map((v,i) => `${(i/(values.length-1 || 1))*320},${120-(v/max)*100}`).join(' ');
-  $('#progress').innerHTML = `<div class="section-head"><h2>変化</h2></div><article class="card"><h3>消費カロリーの目安</h3>${values.length ? `<svg class="chart" viewBox="0 0 320 130" preserveAspectRatio="none"><line x1="0" y1="120" x2="320" y2="120"/><polyline points="${points}"/><style>.chart polyline{fill:none;stroke:#ef5143;stroke-width:3}</style></svg>` : '<div class="empty">記録を追加すると表示されます</div>'}</article><div class="section-head"><h2>履歴</h2></div><div class="history">${sessions.slice(-12).reverse().map(s => `<article class="card history-item"><div class="grow"><h3>${fmtDate(s.date)} · ${s.parts.join('＋')}</h3><p>${s.exercises.length}種目${s.treadmill.minutes ? ` · トレッドミル ${s.treadmill.minutes}分` : ''}</p></div><span class="tag">${calories(s)} kcal</span></article>`).join('') || '<div class="empty">まだ記録がありません</div>'}</div>`;
+  const filtered = historyPart === 'すべて' ? sessions : sessions.filter(s => s.parts.includes(historyPart));
+  const history = filtered.slice().reverse().map(s => {
+    const exercises = historyPart === 'すべて' ? s.exercises : s.exercises.filter(x => x.part === historyPart);
+    const rows = exercises.map(x => `<li><strong>${esc(x.name)}</strong><span>${x.weight}kg × ${x.reps}回 × ${x.sets}セット</span></li>`).join('');
+    return `<details class="card history-detail"><summary><div class="grow"><h3>${fmtDate(s.date)} · ${s.parts.join('＋')}</h3><p>${exercises.length}種目${s.treadmill?.minutes ? ` · トレッドミル ${s.treadmill.minutes}分` : ''}</p></div><span class="tag">${calories(s)} kcal</span></summary><ul class="exercise-history">${rows}</ul>${s.treadmill?.minutes ? `<p class="treadmill-history">トレッドミル：${s.treadmill.minutes}分・傾斜${s.treadmill.incline}%・${s.treadmill.distance}km</p>` : ''}</details>`;
+  }).join('');
+  $('#progress').innerHTML = `<div class="section-head"><h2>変化</h2></div><article class="card"><h3>消費カロリーの目安</h3>${values.length ? `<svg class="chart" viewBox="0 0 320 130" preserveAspectRatio="none"><line x1="0" y1="120" x2="320" y2="120"/><polyline points="${points}"/><style>.chart polyline{fill:none;stroke:#ef5143;stroke-width:3}</style></svg>` : '<div class="empty">記録を追加すると表示されます</div>'}</article><div class="section-head"><h2>部位ごとの記録</h2></div><div class="history-filter">${['すべて', ...parts].map(part => `<button class="${historyPart === part ? 'selected' : ''}" data-history-part="${part}">${part}</button>`).join('')}</div><p class="notice">部位を選ぶと、その部位の記録だけを表示します。日付を押すと詳しい内容を確認できます。</p><div class="history">${history || `<div class="empty">${historyPart}の記録はまだありません</div>`}</div>`;
 }
 function renderSettings() {
   $('#settingsPage').innerHTML = `<div class="section-head"><h2>設定</h2><button class="text" data-page="home">戻る</button></div><form id="settingsForm" class="card stack"><label>体重（kg）<input name="weight" type="number" min="20" max="300" step="0.1" value="${state.profile.weight}" required></label><label>目標<select name="goal">${Object.entries(goals).map(([k,v]) => `<option value="${k}" ${state.profile.goal===k?'selected':''}>${v}</option>`).join('')}</select></label><button class="primary">保存</button></form>`; $('#settingsForm').onsubmit = e => { e.preventDefault(); const f = new FormData(e.target); state.profile.weight = Number(f.get('weight')); state.profile.goal = f.get('goal'); save(); go('home'); };
 }
-document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.page) go(b.dataset.page); if (b.dataset.part) { draft ||= { parts: [] }; draft.parts = draft.parts.includes(b.dataset.part) ? draft.parts.filter(x => x !== b.dataset.part) : [...draft.parts, b.dataset.part]; renderHome(); } if (b.hasAttribute('data-clear-parts')) { draft = null; renderHome(); } if (b.hasAttribute('data-start')) { buildDraft(draft.parts); go('workout'); } });
+document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.page) go(b.dataset.page); if (b.dataset.historyPart) { historyPart = b.dataset.historyPart; renderProgress(); } if (b.dataset.part) { draft ||= { parts: [] }; draft.parts = draft.parts.includes(b.dataset.part) ? draft.parts.filter(x => x !== b.dataset.part) : [...draft.parts, b.dataset.part]; renderHome(); } if (b.hasAttribute('data-clear-parts')) { draft = null; renderHome(); } if (b.hasAttribute('data-start')) { buildDraft(draft.parts); go('workout'); } });
 $('#settings').onclick = () => state.profile && go('settingsPage');
 if (!state.profile) { renderOnboarding(); go('onboarding'); } else { $('#nav').hidden = false; go('home'); }
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js?v=4');
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js?v=6');
